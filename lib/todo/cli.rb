@@ -43,21 +43,25 @@ module Todo
       puts "Task: #{item.task} is done... Bam!!"
     end
 
-    def self.nexty(next_list)
-      new_list = List.where :name => next_list
-      items = Item.all
-      next_item = items.to_a.shuffle!.pop
-      item = Item.find_by :due_date == true
-      if item
-        puts "Next task: #{next_item.task}"
-      else
-        next_item = items.to_a.shuffle!.pop
-        puts "Next task: #{next_item.task}"
-      end
+    def self.nexty()
+      random_item = Item.order("RANDOM()").first
+      puts random_item.task
     end
 
     def self.search(string)
+      items = Item.where('task LIKE ?', '%' + string + '%')
 
+      unless items.empty?
+        puts "#{items.count} Matches.\n----------"
+
+        items.each do |item|
+          done = item.is_complete ? '√' : ' '
+          puts "[#{done}] #{item.id} #{item.task}"
+        end
+      else
+        puts "There were no matches."
+      end
+      puts ''
     end
 
     def self.run
@@ -71,12 +75,12 @@ module Todo
         when "done"
           done(ARGV[1])
 
-        when "nexty"
-          nexty(*ARGV[0, 1])
+        when "next"
+          nexty()
 
         when "search"
-          search(ARGV[0])
-        end
+          search(ARGV[1])
       end
     end
+  end
 end
