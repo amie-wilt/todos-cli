@@ -43,6 +43,23 @@ module Todo
       puts "Task: #{item.task} is done... Bam!!"
     end
 
+    def self.nexty(next_list)
+      new_list = List.where :name => next_list
+      items = Item.all
+      next_item = items.to_a.shuffle!.pop
+      item = Item.find_by :due_date == true
+      if item
+        puts "Next task: #{next_item.task}"
+      else
+        next_item = items.to_a.shuffle!.pop
+        puts "Next task: #{next_item.task}"
+      end
+    end
+
+    def self.search(string)
+
+    end
+
     def self.run
       case ARGV[0]
         when "add"
@@ -52,7 +69,13 @@ module Todo
           list(ARGV[1])
 
         when "done"
-          done(ARGV[1])    
+          done(ARGV[1])
+
+        when "nexty"
+          nexty(*ARGV[0, 1])
+
+        when "search"
+          search(ARGV[0])
         end
       end
     end
